@@ -1,15 +1,14 @@
-// api/openai.js
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: process.env.sk-proj-yHjLSJJdOdXR5WO8c1iOT3BlbkFJGgShqarSjQFZGEz0GwPX,
+  apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
 module.exports = async (req, res) => {
   if (req.method === 'POST') {
     const { prompt } = req.body;
-    console.log('Received prompt:', prompt); // Debugging line
+    console.log('Received prompt:', prompt);
 
     try {
       const completion = await openai.createCompletion({
@@ -17,10 +16,10 @@ module.exports = async (req, res) => {
         prompt: prompt,
         max_tokens: 150,
       });
-      console.log('OpenAI response:', completion.data.choices[0].text); // Debugging line
+      console.log('OpenAI response:', completion.data.choices[0].text);
       res.status(200).json({ result: completion.data.choices[0].text });
     } catch (error) {
-      console.error('Error with OpenAI API:', error); // Debugging line
+      console.error('Error with OpenAI API:', error);
       res.status(500).json({ error: error.message });
     }
   } else {
