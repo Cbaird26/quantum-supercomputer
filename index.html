@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Supercomputer</title>
+</head>
+<body>
+  <h1>Quantum Supercomputer</h1>
+  <form id="promptForm">
+    <textarea id="prompt" rows="5" cols="40" placeholder="Enter your prompt..."></textarea><br>
+    <button type="submit">Submit</button>
+  </form>
+  <pre id="result"></pre>
+
+  <button id="login-button">Login with Google</button>
+  <button id="checkout-button">Subscribe</button>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+  <script src="firebaseConfig.js"></script>
+  <script>
+    // Firebase Authentication
+    import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+    import { auth } from './firebaseConfig.js';
+
+    document.getElementById('login-button').addEventListener('click', () => {
+      const provider = new GoogleAuthProvider();
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const user = result.user;
+          console.log('User signed in:', user);
+        })
+        .catch((error) => {
+          console.error('Error during sign-in:', error);
+        });
+    });
+
+    // OpenAI API integration
+    document.getElementById('promptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = document.getElementById('prompt').value;
+      const response = await fetch('/api/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: prompt })
+      });
+      const result = await response.json();
+      document.getElementById('result').innerText = result.result || result.error;
+    });
+
+    // Stripe Checkout
+    document.getElementById('checkout-button').addEventListener('click', async () => {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ priceId: 'YOUR_PRICE_ID' }),
+      });
+
+      const session = await response.json();
+
+      const stripe = Stripe('YOUR_PUBLIC_STRIPE_KEY');
+      await stripe.redirectToCheckout({ sessionId: session.id });
+    });
+  </script>
+</body>
+</html>
