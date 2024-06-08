@@ -71,3 +71,37 @@
   </script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Supercomputer</title>
+</head>
+<body>
+  <h1>Quantum Supercomputer</h1>
+  <form id="promptForm">
+    <textarea id="prompt" rows="5" cols="40" placeholder="Enter your prompt..."></textarea><br>
+    <button type="submit">Submit</button>
+  </form>
+  <pre id="result"></pre>
+
+  <script>
+    document.getElementById('promptForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = document.getElementById('prompt').value;
+      const response = await fetch('/api/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ prompt: prompt })
+      });
+      const result = await response.json();
+      document.getElementById('result').innerText = result.result || result.error;
+    });
+  </script>
+</body>
+</html>
+
