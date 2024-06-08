@@ -1,12 +1,12 @@
 {
-  "name": "quantum-supercomputer",
+  "name": "openai-api-example",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "echo 'No build step needed'",
-    "start": "vercel dev"
+    "start": "node index.js"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "openai": "^3.0.0"
   }
 }
