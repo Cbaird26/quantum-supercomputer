@@ -1,36 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum Supercomputer</title>
-</head>
-<body>
-  <h1>Quantum Supercomputer</h1>
-  <form id="promptForm">
-    <textarea id="prompt" rows="5" cols="40" placeholder="Enter your prompt..."></textarea><br>
-    <button type="submit">Submit</button>
-  </form>
-  <pre id="result"></pre>
+const axios = require('axios');
 
-  <script>
-    document.getElementById('promptForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const prompt = document.getElementById('prompt').value;
-      try {
-        const response = await fetch('/api/openai', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ prompt: prompt })
-        });
-        const result = await response.json();
-        document.getElementById('result').innerText = result.result || result.error;
-      } catch (error) {
-        document.getElementById('result').innerText = 'Error: ' + error.message;
-      }
-    });
-  </script>
-</body>
-</html>
+async function testOpenAI() {
+  const apiKey = process.env.OPENAI_API_KEY; // Ensure your API key is set in the environment
+  const apiUrl = 'https://api.openai.com/v1/completions';
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${apiKey}`
+  };
+
+  const data = {
+    model: "text-davinci-003",
+    prompt: "Say this is a test",
+    max_tokens: 10,
+  };
+
+  try {
+    const response = await axios.post(apiUrl, data, { headers });
+    console.log(response.data.choices[0].text);
+  } catch (error) {
+    console.error("Error with OpenAI API:", error.message);
+  }
+}
+
+testOpenAI();
